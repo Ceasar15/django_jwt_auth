@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework.settings import api_settings
 from django.utils.module_loading import import_string
 from rest_framework.utils import datetime_from_epoch, datetime_to_epoch
+# from rest_framework.token_blacklist import OutstandingToken
 class Token:
     
     token_type = None
@@ -126,5 +127,6 @@ class RefreshToken(Token):
             if claim in no_copy:
                 continue
             access[claim] = value
+
+        return access;        
         
-        return access;
