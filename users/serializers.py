@@ -13,7 +13,7 @@ class PasswordField(serializers.Field):
         super().__init__(*args, **kwargs)
 
 
-class TokenObtainSerializer(serializers.CharField):
+class TokenObtainSerializer(serializers.Serializer):
     username_field = get_user_model().USERNAME_FIELD
 
     default_error_messages = {
