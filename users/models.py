@@ -15,5 +15,8 @@ class User(models.Model):
     class Meta:
         ordering = ('username',)
         
+    def __init__(self, token=None):
+        self.toke = token
+        
     def __str__(self):
         return self.title
