@@ -3,7 +3,7 @@ from uuid import uuid4
 from rest_framework import exceptions
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.settings import api_settings
-
+from django.utils.module_loading import import_string
 
 class Token:
     
@@ -44,9 +44,48 @@ class Token:
         """
         return self.get_token_backend().encode(self.payload)
     
-    def verify():
+    def verify_token_type(self):
+        try:
+            token_type = self.payload[api_settings.TOKEN_TYPE_CLAIM]
+        except KeyError:
+            raise exceptions.TokenError(_("Token has no type"))
         
+    @classmethod
+    def for_user(cls, user):
+        user_id = getattr(user, api_settings.USER_ID_FIELD)
+        if not isinstance(user_id, int):
+            user_id = str(user_id)
+            
+        token = cls()
+        token[api_settings.USER_ID_CLAIM] = user_id
 
-            
-            
-            
+        return token
+    
+    _token_backend = None
+    
+    def get_token_backend(self):
+        if self._token_backend is None:
+            self._token_backend = import_string(
+                "rest_framework_simplejwt.state.token_backend"
+            )            
+        return self._token_backend
+    
+class AccessToken(Token):
+    token_type = "access"
+    lifetime = api_settings.ACCESS_TOKEN_LIFETIME
+    
+    
+class RefreshToken(Token):
+    token_type = "refresh"
+    lifetime = api_settings.REFRESH_TOKEN_LIFETIME
+    
+    no_copy_claims = (
+        api_settings.TOKEN_TYPE_CLAIM,
+        'exp',
+        api_settings.JTI_CLAIM,
+        'jti'
+    )
+    
+    @property
+    def access_token(self):
+        access = AccessToken()
