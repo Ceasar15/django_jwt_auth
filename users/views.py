@@ -2,30 +2,31 @@ from django.shortcuts import render
 from .models import User
 
 
-from rest_framework import generics, status
-from rest_framework.authentication import AUTH_HEADER_TYPES
+from rest_framework import generics
+# from rest_framework.authentication import AUTH_HEADER_TYPES
 from rest_framework import exceptions
 from rest_framework.response import Response
-
+from .serializers import TokenObtainSerializer
+from rest_framework import status
 # Create your views here.
 
 
 
-def user_view():
-    users = User.objects.all()
-    context = {
-        'users': users
-    }
-    return render('user.html', context)
+# def user_view(request):
+#     users = User.objects.all()
+#     context = {
+#         'users': users
+#     }
+#     return render(request, context)
 
-class TokenView(generics.GenericView):
+class TokenView(generics.CreateAPIView):
     permission_classes = ()
     authentication_classes = ()
     
-    serializer_class = None
+    serializer_class = TokenObtainSerializer
     
     def get_authenticate_header(self, request):
-        return "{} realm='{}'".format(AUTH_HEADER_TYPES[0], self.www_authenticate_realm,)
+        return "{} realm='{}'".format(self.www_authenticate_realm,)
     
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
