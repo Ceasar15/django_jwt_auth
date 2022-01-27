@@ -44,6 +44,17 @@ class Token:
         """
         return self.get_token_backend().encode(self.payload)
     
+    def set_jti(self):
+        self.payload[api_settings.JTI_CLAIM] = uuid4().hex
+    
+    def set_exp(self, claim='exp', lifetime=None, from_time=None):
+        if from_time is None:
+            from_time = self.current_time
+            
+        if lifetime is None:
+            lifetime = self.lifetime
+        
+    
     def verify_token_type(self):
         try:
             token_type = self.payload[api_settings.TOKEN_TYPE_CLAIM]
@@ -89,3 +100,5 @@ class RefreshToken(Token):
     @property
     def access_token(self):
         access = AccessToken()
+        
+        access.set_exp(from_time=self.current_time)
