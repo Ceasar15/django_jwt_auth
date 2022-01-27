@@ -2,6 +2,8 @@ from datetime import timedelta
 from uuid import uuid4
 from rest_framework import exceptions
 from django.utils.translation import ugettext_lazy as _
+from rest_framework.settings import api_settings
+
 
 class Token:
     
@@ -27,11 +29,24 @@ class Token:
                 self.verify()
             
         else:
-            self.payload = {}
+            self.payload = {api_settings.TOKEN_TYPE_CLAIM: self.token_type}
             
+            # Set "exp" and "iat" claims with default value
+            self.set_exp(from_time=self.current_time, lifetime=self.lifetime)
+            self.set_iat(at_time=self.current_time)
+
+            # Set "jti" claim
+            self.set_jti()
             
-            
-            
+    def __str__(self):
+        """
+        Signs and returns a token as a base64 encoded string.
+        """
+        return self.get_token_backend().encode(self.payload)
+    
+    def verify():
+        
+
             
             
             
