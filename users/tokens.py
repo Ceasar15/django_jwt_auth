@@ -66,7 +66,12 @@ class Token:
         claim_time = datetime_from_epoch(claim_value)
         if claim_time <= current_time:
             raise exceptions.TokenError(_("Token {} claim has expired"), claim)
+           
+    def set_iat(self, claim='iat', at_time=None):
+        if at_time is None:
+            at_time = self.current_time
             
+        self.payload[claim] = datetime_to_epoch(at_time)
     
     def verify_token_type(self):
         try:
@@ -115,3 +120,11 @@ class RefreshToken(Token):
         access = AccessToken()
         
         access.set_exp(from_time=self.current_time)
+
+        no_copy = self.no_copy_claims
+        for claim, value in self.payload.items():
+            if claim in no_copy:
+                continue
+            access[claim] = value
+        
+        return access;
