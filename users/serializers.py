@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import gettext_lazy as _
 
 
-class PasswordField(serializers.Field):
+class PasswordField(serializers.ReadOnlyField):
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('style', {})

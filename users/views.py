@@ -4,7 +4,8 @@ from .models import User
 
 from rest_framework import generics
 # from rest_framework.authentication import AUTH_HEADER_TYPES
-from rest_framework import exceptions
+# from rest_framework import exceptions
+from rest_framework_simplejwt import exceptions
 from rest_framework.response import Response
 from .serializers import TokenObtainSerializer
 from rest_framework import status
