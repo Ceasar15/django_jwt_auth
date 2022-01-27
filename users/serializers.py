@@ -5,24 +5,38 @@ from django.utils.translation import gettext_lazy as _
 
 
 class PasswordField(serializers.Field):
+
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('style', {})
         kwargs['style']['input_type'] = 'password'
-        
-        super().__init__(*args, **kwargs)    
+
+        super().__init__(*args, **kwargs)
+
 
 class TokenObtainSerializer(serializers.CharField):
     username_field = get_user_model().USERNAME_FIELD
-    
+
     default_error_messages = {
         "no_active_account": _("No active account available  o")
     }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         self.fields[self.username_field] = serializers.CharField()
         self.fields["password"] = PasswordField()
-    
+
     def validate(self, attrs):
-        
+        authenticate_kwargs = {
+            self.username_field: attrs[self.username_field],
+            "password": attrs["password"]
+        }
+
+        try:
+            authenticate_kwargs['request'] = self.context['request']
+        except KeyError:
+            pass
+
+        self.user = self.authenticate(**authenticate_kwargs)
+
+        return {}
