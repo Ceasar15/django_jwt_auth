@@ -4,7 +4,7 @@ from rest_framework import exceptions
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.settings import api_settings
 from django.utils.module_loading import import_string
-
+from rest_framework.utils import datetime_from_epoch, datetime_to_epoch
 class Token:
     
     token_type = None
@@ -53,7 +53,20 @@ class Token:
             
         if lifetime is None:
             lifetime = self.lifetime
+    
+    def check_exp(self, claim='exp', current_time=None):
+        if current_time is None:
+            current_time = self.current_time
+            
+        try:
+            claim_value = self.payload[claim] 
+        except exceptions.KeyError:
+            raise exceptions.TokenError(_("Token has no {} claim"))
         
+        claim_time = datetime_from_epoch(claim_value)
+        if claim_time <= current_time:
+            raise exceptions.TokenError(_("Token {} claim has expired"), claim)
+            
     
     def verify_token_type(self):
         try:
