@@ -10,7 +10,7 @@ class TokenBackend:
         self._validate_algorithm(algorithm)
         
         self.algorithm = algorithm
-        self.signing_key = signing_key
+        self.signing_key = str(signing_key)
         self.verifying_key = verifying_key
         self.audience = audience
         self.issuer = issuer
