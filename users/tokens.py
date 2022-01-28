@@ -85,10 +85,10 @@ class Token:
         user_id = getattr(user, USER_ID_FIELD)
         if not isinstance(user_id, int):
             user_id = str(user_id)
-            
+        
         token = cls()
-        print(token)
-        token[USER_ID_CLAIM] = user_id
+        print("dfsdfsdfsdfsd", token)
+        # token[USER_ID_CLAIM] = user_id
 
         return token
     
