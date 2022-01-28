@@ -1,11 +1,12 @@
 from datetime import timedelta
 from uuid import uuid4
 from rest_framework import exceptions
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from rest_framework.settings import api_settings
 from django.utils.module_loading import import_string
-from rest_framework.utils import datetime_from_epoch, datetime_to_epoch
-# from rest_framework.token_blacklist import OutstandingToken
+from .utils import datetime_from_epoch, datetime_to_epoch
+from .config import ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME, TOKEN_TYPE_CLAIM, JTI_CLAIM, USER_ID_FIELD, USER_ID_CLAIM
+
 class Token:
     
     token_type = None
@@ -30,7 +31,7 @@ class Token:
                 self.verify()
             
         else:
-            self.payload = {api_settings.TOKEN_TYPE_CLAIM: self.token_type}
+            self.payload = {TOKEN_TYPE_CLAIM: self.token_type}
             
             # Set "exp" and "iat" claims with default value
             self.set_exp(from_time=self.current_time, lifetime=self.lifetime)
@@ -46,7 +47,7 @@ class Token:
         return self.get_token_backend().encode(self.payload)
     
     def set_jti(self):
-        self.payload[api_settings.JTI_CLAIM] = uuid4().hex
+        self.payload[JTI_CLAIM] = uuid4().hex
     
     def set_exp(self, claim='exp', lifetime=None, from_time=None):
         if from_time is None:
@@ -76,18 +77,20 @@ class Token:
     
     def verify_token_type(self):
         try:
-            token_type = self.payload[api_settings.TOKEN_TYPE_CLAIM]
+            token_type = self.payload[TOKEN_TYPE_CLAIM]
         except KeyError:
             raise exceptions.TokenError(_("Token has no type"))
         
     @classmethod
     def for_user(cls, user):
-        user_id = getattr(user, api_settings.USER_ID_FIELD)
+        print(user)
+        print(dir(user))
+        user_id = getattr(user, USER_ID_FIELD)
         if not isinstance(user_id, int):
             user_id = str(user_id)
             
         token = cls()
-        token[api_settings.USER_ID_CLAIM] = user_id
+        token[USER_ID_CLAIM] = user_id
 
         return token
     
@@ -102,17 +105,17 @@ class Token:
     
 class AccessToken(Token):
     token_type = "access"
-    lifetime = api_settings.ACCESS_TOKEN_LIFETIME
+    lifetime = ACCESS_TOKEN_LIFETIME
     
     
 class RefreshToken(Token):
     token_type = "refresh"
-    lifetime = api_settings.REFRESH_TOKEN_LIFETIME
+    lifetime = REFRESH_TOKEN_LIFETIME
     
     no_copy_claims = (
-        api_settings.TOKEN_TYPE_CLAIM,
+        TOKEN_TYPE_CLAIM,
         'exp',
-        api_settings.JTI_CLAIM,
+        JTI_CLAIM,
         'jti'
     )
     

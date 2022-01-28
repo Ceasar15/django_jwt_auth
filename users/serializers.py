@@ -45,11 +45,12 @@ class TokenObtainSerializer(serializers.Serializer):
 class TokenObtainPairSerializer(TokenObtainSerializer):
     @classmethod
     def get_token(cls, user):
-        return RefreshToken.from_user(user)
+        return RefreshToken.for_user(user)
 
     def validate(self, attrs):
         data = super().validate(attrs)
-        
+        print("data serial", data)
+        print("userrrr", self.user)
         refresh = self.get_token(self.user)
         
         data["refresh"] = str(refresh) 
