@@ -1,10 +1,11 @@
-from datetime import timedelta
 from uuid import uuid4
 from rest_framework import exceptions
 from django.utils.translation import gettext_lazy as _
 from django.utils.module_loading import import_string
 from .utils import datetime_from_epoch, datetime_to_epoch, aware_utcnow
 from .config import ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME, TOKEN_TYPE_CLAIM, JTI_CLAIM, USER_ID_FIELD, USER_ID_CLAIM
+from rest_framework_simplejwt.tokens import BlacklistMixin
+
 
 class Token:
     
@@ -126,7 +127,6 @@ class AccessToken(Token):
     lifetime = ACCESS_TOKEN_LIFETIME
     
 
-from rest_framework_simplejwt.tokens import BlacklistMixin
 class RefreshToken(BlacklistMixin , Token):
     token_type = "refresh"
     lifetime = REFRESH_TOKEN_LIFETIME
