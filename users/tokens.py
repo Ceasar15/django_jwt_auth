@@ -2,9 +2,8 @@ from datetime import timedelta
 from uuid import uuid4
 from rest_framework import exceptions
 from django.utils.translation import gettext_lazy as _
-from rest_framework.settings import api_settings
 from django.utils.module_loading import import_string
-from .utils import datetime_from_epoch, datetime_to_epoch
+from .utils import datetime_from_epoch, datetime_to_epoch, aware_utcnow
 from .config import ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME, TOKEN_TYPE_CLAIM, JTI_CLAIM, USER_ID_FIELD, USER_ID_CLAIM
 
 class Token:
@@ -17,8 +16,8 @@ class Token:
             raise exceptions.InvalidTokenError(_("Cannot create token with no type or lifetime"))
         
         self.token = token
-        self.current_time = None
-        
+        self.current_time = aware_utcnow()
+                
         if token is not None:
             token_backend = self.get_token_backend()
             
@@ -72,7 +71,7 @@ class Token:
     def set_iat(self, claim='iat', at_time=None):
         if at_time is None:
             at_time = self.current_time
-        print("at timeee", at_time)
+            
         self.payload[claim] = datetime_to_epoch(at_time)
     
     def verify_token_type(self):
@@ -88,6 +87,7 @@ class Token:
             user_id = str(user_id)
             
         token = cls()
+        print(token)
         token[USER_ID_CLAIM] = user_id
 
         return token

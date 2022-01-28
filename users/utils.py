@@ -20,3 +20,7 @@ def datetime_to_epoch(dt):
 
 def datetime_from_epoch(ts):
     return make_utc(datetime.utcfromtimestamp(ts))
+
+def aware_utcnow():
+    return make_utc(datetime.utcnow())
+
