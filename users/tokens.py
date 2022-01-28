@@ -72,7 +72,7 @@ class Token:
     def set_iat(self, claim='iat', at_time=None):
         if at_time is None:
             at_time = self.current_time
-            
+        print("at timeee", at_time)
         self.payload[claim] = datetime_to_epoch(at_time)
     
     def verify_token_type(self):
@@ -83,8 +83,6 @@ class Token:
         
     @classmethod
     def for_user(cls, user):
-        print(user)
-        print(dir(user))
         user_id = getattr(user, USER_ID_FIELD)
         if not isinstance(user_id, int):
             user_id = str(user_id)

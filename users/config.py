@@ -3,4 +3,4 @@ REFRESH_TOKEN_LIFETIME = "1209600s",
 TOKEN_TYPE_CLAIM = "token_type",
 JTI_CLAIM = "jti"
 USER_ID_CLAIM = "user_id"
-USER_ID_FIELD = "user_id_field"
+USER_ID_FIELD = "id"
