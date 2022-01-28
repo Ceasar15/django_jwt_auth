@@ -2,7 +2,7 @@ from rest_framework import exceptions, serializers
 from rest_framework.exceptions import ValidationError
 from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import gettext_lazy as _
-
+from .tokens import AccessToken, RefreshToken
 
 class PasswordField(serializers.CharField):
 
@@ -38,6 +38,21 @@ class TokenObtainSerializer(serializers.Serializer):
         except KeyError:
             pass
 
-        self.user = self.authenticate(**authenticate_kwargs)
+        self.user = authenticate(**authenticate_kwargs)
 
         return {}
+    
+class TokenObtainPairSerializer(TokenObtainSerializer):
+    @classmethod
+    def get_token(cls, user):
+        return RefreshToken.from_user(user)
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        
+        refresh = self.get_token(self.user)
+        
+        data["refresh"] = str(refresh) 
+        data["access"] = str(refresh.access)        
+        
+        return data
