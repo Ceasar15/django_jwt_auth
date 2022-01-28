@@ -91,8 +91,8 @@ class Token:
             user_id = str(user_id)
         
         token = cls()
-        print("dfsdfsdfsdfsd", token)
         token[USER_ID_CLAIM] = str(user_id)
+        print("dfsdfsdfsdfsd", user_id)
 
         return token
     
