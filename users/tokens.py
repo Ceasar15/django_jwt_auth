@@ -23,6 +23,7 @@ class Token:
             
             try:
                 self.payload = token_backend.decode(token, verify=verify)
+                print("payload 1", self.payload)
             except exceptions.TokenBackendError:
                 raise exceptions.TokenError(_("Token is invalid or expired"))
             
@@ -31,7 +32,7 @@ class Token:
             
         else:
             self.payload = {TOKEN_TYPE_CLAIM: self.token_type}
-            
+            print("payload 2", self.payload)
             # Set "exp" and "iat" claims with default value
             self.set_exp(from_time=self.current_time, lifetime=self.lifetime)
             self.set_iat(at_time=self.current_time)
