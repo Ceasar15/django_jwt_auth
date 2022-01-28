@@ -31,7 +31,7 @@ class Token:
                 self.verify()
             
         else:
-            self.payload = {TOKEN_TYPE_CLAIM: self.token_type}
+            self.payload = {'token_type': self.token_type}  
             print("payload 2", self.payload)
             # Set "exp" and "iat" claims with default value
             self.set_exp(from_time=self.current_time, lifetime=self.lifetime)
