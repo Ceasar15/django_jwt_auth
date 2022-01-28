@@ -7,8 +7,6 @@ from django.utils.functional import lazy
 from django.utils.timezone import is_naive, make_aware, utc
 
 
-
-
 def make_utc(dt):
     if settings.USE_TZ and is_naive(dt):
         return make_aware(dt, timezone=utc)

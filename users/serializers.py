@@ -49,8 +49,6 @@ class TokenObtainPairSerializer(TokenObtainSerializer):
 
     def validate(self, attrs):
         data = super().validate(attrs)
-        print("data serial", data)
-        print("userrrr", self.user)
         refresh = self.get_token(self.user)
         
         data["refresh"] = str(refresh) 

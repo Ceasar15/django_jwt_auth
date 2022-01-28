@@ -43,6 +43,7 @@ class Token:
         """
         Signs and returns a token as a base64 encoded string.
         """
+        print(self.payload)
         return self.get_token_backend().encode(self.payload)
     
     def set_jti(self):
@@ -74,6 +75,9 @@ class Token:
             
         self.payload[claim] = datetime_to_epoch(at_time)
     
+    def get(self, key, default=None):
+        return self.payload.get(key, default)
+    
     def verify_token_type(self):
         try:
             token_type = self.payload[TOKEN_TYPE_CLAIM]
@@ -88,7 +92,7 @@ class Token:
         
         token = cls()
         print("dfsdfsdfsdfsd", token)
-        # token[USER_ID_CLAIM] = user_id
+        token[USER_ID_CLAIM] = user_id
 
         return token
     
