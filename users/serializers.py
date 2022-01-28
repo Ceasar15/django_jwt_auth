@@ -4,11 +4,12 @@ from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import gettext_lazy as _
 
 
-class PasswordField(serializers.ReadOnlyField):
+class PasswordField(serializers.CharField):
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('style', {})
         kwargs['style']['input_type'] = 'password'
+        kwargs["write_only"] = True
 
         super().__init__(*args, **kwargs)
 
