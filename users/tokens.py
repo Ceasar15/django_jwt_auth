@@ -1,10 +1,12 @@
-from datetime import timedelta
 from uuid import uuid4
 from rest_framework import exceptions
 from django.utils.translation import gettext_lazy as _
 from django.utils.module_loading import import_string
 from .utils import datetime_from_epoch, datetime_to_epoch, aware_utcnow
-from .config import ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME, TOKEN_TYPE_CLAIM, JTI_CLAIM, USER_ID_FIELD, USER_ID_CLAIM
+from .config import ACCESS_TOKEN_LIFETIME, REFRESH_TOKEN_LIFETIME, TOKEN_TYPE_CLAIM, JTI_CLAIM, USER_ID_FIELD, USER_ID_CLAIM, ALGORITHM, SIGNING_KEY, VERIFYING_KEY, AUDIENCE, ISSUER, JWK_URL, LEEWAY
+from .backends import TokenBackend
+from rest_framework_simplejwt.tokens import BlacklistMixin
+
 
 class Token:
     
@@ -116,9 +118,10 @@ class Token:
     
     def get_token_backend(self):
         if self._token_backend is None:
-            self._token_backend = import_string(
-                "rest_framework_simplejwt.state.token_backend"
-            )            
+            # self._token_backend = import_string(
+            #     "rest_framework_simplejwt.state.token_backend"
+            # )            
+            self._token_backend = TokenBackend(ALGORITHM, SIGNING_KEY, VERIFYING_KEY, AUDIENCE, ISSUER, JWK_URL, LEEWAY)
         return self._token_backend
     
 class AccessToken(Token):
@@ -126,7 +129,6 @@ class AccessToken(Token):
     lifetime = ACCESS_TOKEN_LIFETIME
     
 
-from rest_framework_simplejwt.tokens import BlacklistMixin
 class RefreshToken(BlacklistMixin , Token):
     token_type = "refresh"
     lifetime = REFRESH_TOKEN_LIFETIME
