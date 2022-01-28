@@ -43,7 +43,7 @@ class Token:
         """
         Signs and returns a token as a base64 encoded string.
         """
-        print(self.payload)
+        print("slef paylaodddddddddd", self.payload)
         return self.get_token_backend().encode(self.payload)
     
     def set_jti(self):
@@ -89,10 +89,9 @@ class Token:
         user_id = getattr(user, USER_ID_FIELD)
         if not isinstance(user_id, int):
             user_id = str(user_id)
-        
+
         token = cls()
         token[USER_ID_CLAIM] = str(user_id)
-        print("dfsdfsdfsdfsd", user_id)
 
         return token
     
@@ -109,8 +108,9 @@ class AccessToken(Token):
     token_type = "access"
     lifetime = ACCESS_TOKEN_LIFETIME
     
-    
-class RefreshToken(Token):
+
+from rest_framework_simplejwt.tokens import BlacklistMixin
+class RefreshToken(BlacklistMixin , Token):
     token_type = "refresh"
     lifetime = REFRESH_TOKEN_LIFETIME
     
