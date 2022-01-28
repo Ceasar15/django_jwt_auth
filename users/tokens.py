@@ -38,13 +38,6 @@ class Token:
 
             # Set "jti" claim
             self.set_jti()
-            
-    def __str__(self):
-        """
-        Signs and returns a token as a base64 encoded string.
-        """
-        print("slef paylaodddddddddd", self.payload)
-        return self.get_token_backend().encode(self.payload)
     
     def set_jti(self):
         self.payload[JTI_CLAIM] = uuid4().hex
@@ -99,6 +92,14 @@ class Token:
         except KeyError:
             raise exceptions.TokenError(_("Token has no type"))
         
+                
+    def __str__(self):
+        """
+        Signs and returns a token as a base64 encoded string.
+        """
+        print("get token backend", self.get_token_backend())
+        return self.get_token_backend().encode(self.payload)
+    
     @classmethod
     def for_user(cls, user):
         user_id = getattr(user, USER_ID_FIELD)
